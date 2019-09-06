@@ -12,11 +12,10 @@ public class Hangman {
         char[] availableLetters = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'j', 'l', 'm', 'n',
                 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
-        int wrongGuesses = 7, wordsUsed = 0;
-        char userGuess, userInput = 'y';
-        int myRandomNumber = GetRandomNumber(10); //see if there's away to define myRandomNumber modularly
-
         boolean gameStatus = true;
+        char userGuess, userInput = 'y';
+        int wrongGuesses = 7, wordsUsed = 0;
+        int myRandomNumber = getRandomNumber(10); //see if there's away to define myRandomNumber modularly
 
         String myWord = wordArray[myRandomNumber];
         int wordLength = myWord.length();
@@ -27,25 +26,21 @@ public class Hangman {
             visibleLetters[i] = '-';
         }
 
-
-        PrintStartup(wordLength);
-
+        printStartup(wordLength);
 
 
-        while (gameStatus) { //wrongGuesses != 0 && userInput == 'y'
-            //while (wrongGuesses != 0) {
+
+        while (gameStatus && wordsUsed < 10) {
             System.out.println("Your word: " + myWord); //get rid of this line for final submission
-            DisplayStatus(visibleLetters, availableLetters, wrongGuesses);
+            displayStatus(visibleLetters, availableLetters, wrongGuesses);
+            userGuess = getUserGuess();
 
-
-            userGuess = GetUserGuess(); // see if this is good... otherwise, old code above
-
-            if (!HasLetterBeenUsed(userGuess, availableLetters)) { //get rid
+            if (!hasLetterBeenUsed(userGuess, availableLetters)) { //get rid
                 System.out.println("Your guess was: " + userGuess);
-                System.out.println(IsLetterInWord(userGuess, myWord));
+                System.out.println(isLetterInWord(userGuess, myWord));
 
                 //update visibleLetters and wrongGuesses
-                if (IsLetterInWord(userGuess, myWord)) {
+                if (isLetterInWord(userGuess, myWord)) {
                     for (int i = 0; i < myWord.length(); i++) {
                         if (myWord.charAt(i) == userGuess) {
                             visibleLetters[i] = userGuess;
@@ -59,57 +54,64 @@ public class Hangman {
                     if (availableLetters[i] == userGuess)
                         availableLetters[i] = '-';
                 }
-                PrintLines();
+                printLines();
             }
+
 
             if (wrongGuesses == 0 || hasWordBeenGuessed(visibleLetters))
             {
-                userInput = askUserToPlayAgain(userInput);
+                if (wordsUsed < 10) {
+                    userInput = askUserToPlayAgain(userInput);
 
-                if (userInput == 'y') {
-                    System.out.println("You are in the if statement");
-                    PrintLines();
+                    if (userInput == 'y') {
+                        System.out.println("You are in the if statement");
+                        printLines();
 
 
-                    myRandomNumber++;
-                    myWord = wordArray[(myRandomNumber) % 10];
-                    wordLength = myWord.length();
-                    wrongGuesses = 7;
-                    wordsUsed++;
-                    resetAvailableLetters(availableLetters);
-                    visibleLetters = resetVisibleLetters(visibleLetters, wordLength);
-                    gameStatus = true;
+                        myRandomNumber++;
+                        myWord = wordArray[(myRandomNumber) % 10];
+                        wordLength = myWord.length();
+                        wrongGuesses = 7;
+                        wordsUsed++;
+                        resetAvailableLetters(availableLetters);
+                        visibleLetters = resetVisibleLetters(visibleLetters, wordLength);
+                        gameStatus = true;
 
-                    //userInput = 'y';
-                    //have int variable that keeps track after 10 rounds have been played
+                        printLines();
+                        System.out.println("words used: " + wordsUsed);
+                    }
+                    else{
+                        System.out.println("You are in the else statement");
+                        printLines();
+                        gameStatus = false;
+                    }
                 }
-                else{
-                    System.out.println("You are in the else statement");
-                    PrintLines();
-                    gameStatus = false;
-                }
+                else
+                    finishGame(wordsUsed);
             }
         }
+
+        finishGame(wordsUsed);
     }
 
 
 
-        public static void PrintStartup(int wordLength)
+        public static void printStartup(int wordLength)
         {
             System.out.println("The word to guess has " + wordLength + " letters.");
             System.out.println();
         }
 
 
-        public static void DisplayStatus(char[] visibleLetters, char[] availableLetters, int wrongGuesses)
+        public static void displayStatus(char[] visibleLetters, char[] availableLetters, int wrongGuesses)
         {
-            PrintList(visibleLetters);
+            printList(visibleLetters);
             System.out.print("Available letters: ");
-            PrintList(availableLetters);
+            printList(availableLetters);
             System.out.println(wrongGuesses + " incorrect guesses remaining.");
         }
 
-        public static void PrintList(char[] array)
+        public static void printList(char[] array)
         {
             for (int i = 0; i < array.length; i++)
             {
@@ -118,7 +120,7 @@ public class Hangman {
             System.out.println();
         }
 
-        public static boolean IsLetterInWord(char letter, String myWord)
+        public static boolean isLetterInWord(char letter, String myWord)
         {
             for (int i = 0; i < myWord.length(); i++) {
                 if (myWord.charAt(i) == letter)
@@ -127,7 +129,7 @@ public class Hangman {
             return false;
         }
 
-        public static boolean HasLetterBeenUsed(char letter, char[] myArray)
+        public static boolean hasLetterBeenUsed(char letter, char[] myArray)
         {
             for (int i = 0; i < myArray.length; i++)
             {
@@ -137,14 +139,14 @@ public class Hangman {
             return true;
         }
 
-        public static int GetRandomNumber(int bound)
+        public static int getRandomNumber(int bound)
         {
             Random randomNumber = new Random();
             int myRandomNumber = randomNumber.nextInt(bound);
             return myRandomNumber;
         }
 
-        public static char GetUserGuess()
+        public static char getUserGuess()
         {
             Scanner kb = new Scanner(System.in);
             System.out.println("Please enter your guess: ");
@@ -153,7 +155,7 @@ public class Hangman {
             return userGuess;
         }
 
-        public static void PrintLines()
+        public static void printLines()
         {
             System.out.println();
             System.out.println();
@@ -198,5 +200,14 @@ public class Hangman {
                 visibleLetters[i] = '-';
             }
             return visibleLetters;
+        }
+
+        public static void finishGame(int wordsUsed)
+        {
+            if (wordsUsed > 9)
+            {
+                System.out.println("That's all the words I have stored. Thanks for playing!");
+                printLines();
+            }
         }
 }
