@@ -23,12 +23,10 @@ public class Hangman {
 
         //MakingVisibleLettersArray
         char[] visibleLetters = new char[wordLength];
-
-        /*for (int i = 0; i < wordLength; i++) {
+        for (int i = 0; i < wordLength; i++) {
             visibleLetters[i] = '-';
-        }*/
+        }
 
-        visibleLetters = makeVisibleLettersArray(visibleLetters, wordLength);
 
         PrintStartup(wordLength);
 
@@ -40,15 +38,6 @@ public class Hangman {
             DisplayStatus(visibleLetters, availableLetters, wrongGuesses);
 
 
-
-              //  while (placeHolder = true) { //get rid of this while loop to fix
-
-                    //make this a method for GetUserGuess(char userGuess)
-/*                    Scanner kb = new Scanner(System.in);
-                    System.out.println("Please enter your guess: ");
-                    char userGuess = kb.next().charAt(0);
-                    kb.nextLine();
-*/
             userGuess = GetUserGuess(); // see if this is good... otherwise, old code above
 
             if (!HasLetterBeenUsed(userGuess, availableLetters)) { //get rid
@@ -80,8 +69,16 @@ public class Hangman {
                 if (userInput == 'y') {
                     System.out.println("You are in the if statement");
                     PrintLines();
-                    resetGame(myRandomNumber, myWord, wordArray, wordLength,
-                    wrongGuesses, wordsUsed, availableLetters, visibleLetters, gameStatus);
+
+
+                    myRandomNumber++;
+                    myWord = wordArray[(myRandomNumber) % 10];
+                    wordLength = myWord.length();
+                    wrongGuesses = 7;
+                    wordsUsed++;
+                    resetAvailableLetters(availableLetters);
+                    visibleLetters = resetVisibleLetters(visibleLetters, wordLength);
+                    gameStatus = true;
 
                     //userInput = 'y';
                     //have int variable that keeps track after 10 rounds have been played
@@ -193,28 +190,9 @@ public class Hangman {
             }
         }
 
-        public static void resetVisibleLetters(char[] visibleLetters, int wordLength)
+        public static char[] resetVisibleLetters(char[] visibleLetters, int wordLength)
         {
             visibleLetters = null;
-            makeVisibleLettersArray(visibleLetters, wordLength);
-        }
-
-        public static void resetGame(int myRandomNumber, String myWord, String[] wordArray, int wordLength,
-                                     int wrongGuesses, int wordsUsed, char[] availableLetters,
-                                     char[] visibleLetters, boolean gameStatus)
-        {
-            myRandomNumber++;
-            myWord = wordArray[(myRandomNumber) % 10];
-            wordLength = myWord.length();
-            wrongGuesses = 7;
-            wordsUsed++;
-            resetAvailableLetters(availableLetters);
-            resetVisibleLetters(visibleLetters, wordLength);
-            gameStatus = true;
-        }
-
-        public static char[] makeVisibleLettersArray(char[] visibleLetters, int wordLength)
-        {
             visibleLetters = new char[wordLength];
             for (int i = 0; i < wordLength; i++) {
                 visibleLetters[i] = '-';
